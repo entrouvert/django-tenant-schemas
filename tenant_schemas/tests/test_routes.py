@@ -41,7 +41,7 @@ class RoutesTestCase(BaseTestCase):
         super(RoutesTestCase, self).setUp()
         self.factory = RequestFactory()
         self.tm = TenantMiddleware(lambda r:r)
-        self.dtm = DefaultTenantMiddleware()
+        self.dtm = DefaultTenantMiddleware(lambda r:r)
 
         self.tenant_domain = "tenant.test.com"
         self.tenant = Tenant(domain_url=self.tenant_domain, schema_name="test")
@@ -84,7 +84,7 @@ class RoutesTestCase(BaseTestCase):
 
     def test_non_existent_tenant_custom_middleware(self):
         """Route unrecognised hostnames to the 'test' tenant."""
-        dtm = TestDefaultTenantMiddleware()
+        dtm = TestDefaultTenantMiddleware(lambda r:r)
         request = self.factory.get(
             self.url, HTTP_HOST=self.non_existent_tenant.domain_url
         )
@@ -94,7 +94,7 @@ class RoutesTestCase(BaseTestCase):
 
     def test_non_existent_tenant_and_default_custom_middleware(self):
         """Route unrecognised hostnames to the 'missing' tenant."""
-        dtm = MissingDefaultTenantMiddleware()
+        dtm = MissingDefaultTenantMiddleware(lambda r:r)
         request = self.factory.get(
             self.url, HTTP_HOST=self.non_existent_tenant.domain_url
         )
